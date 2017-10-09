@@ -1,0 +1,21 @@
+{
+  "dev": {
+    "region": "us-west-2",
+    "api_handler_name": "project-test-dev",
+    "api_handler_arn": "arn:aws:lambda:us-west-2:103357577363:function:project-test-dev",
+    "rest_api_id": "iq3bxb5ocb",
+    "lambda_functions": {
+      "project-test-dev-custom_lambda_function": {
+        "type": "pure_lambda",
+        "arn": "arn:aws:lambda:us-west-2:103357577363:function:project-test-dev-custom_lambda_function"
+      },
+      "project-test-dev-MyFunction": {
+        "type": "pure_lambda",
+        "arn": "arn:aws:lambda:us-west-2:103357577363:function:project-test-dev-MyFunction"
+      }
+    },
+    "chalice_version": "1.0.2",
+    "api_gateway_stage": "api",
+    "backend": "api"
+  }
+}
