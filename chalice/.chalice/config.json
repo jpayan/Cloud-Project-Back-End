@@ -3,7 +3,8 @@
     "dev": {
       "api_gateway_stage": "api",
       "manage_iam_role": false,
-      "iam_role_arn": "arn:aws:iam::103357577363:role/chalice-test-dev"
+//      "iam_role_arn": "arn:aws:iam::103357577363:role/chalice-test-dev"
+      "iam_role_arn": "arn:aws:iam::292274580527:role/cc116_lambda"
     }
   }, 
   "version": "2.0", 

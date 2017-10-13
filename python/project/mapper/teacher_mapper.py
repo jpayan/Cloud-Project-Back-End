@@ -1,93 +1,48 @@
-import uuid
 import boto3
-
-ses = boto3.client('ses')
+from project.utils import *
 
 dynamodb = boto3.resource('dynamodb')
-test_table = dynamodb.Table('Tests')
+teacher_table = dynamodb.Table('nb-teachers')
 
 
-def create_table(table_name):
-    try:
-        table = dynamodb.create_table(
-            TableName=table_name,
-            KeySchema=[
-                {
-                    'AttributeName': 'id',
-                    'KeyType': 'S'
-                }
-            ],
-            AttributeDefinitions=[
-                {
-                    'AttributeName': 'name',
-                    'AttributeType': 'S'
-                },
-                {
-                    'AttributeName': 'subject',
-                    'AttributeType': 'S'
-                },
-                {
-                    'AttributeName': 'questions',
-                    'AttributeType': 'LM'
-                }
-            ],
-            ProvisionedThroughput={
-                'ReadCapacityUnits': 5,
-                'WriteCapacityUnits': 5
-            }
-        )
-    except Exception as e:
-        return 'Error: ' + e.message
-    else:
-        table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
-        return {'Success': table_name + ' created successfully.'}
-
-
-def create_test(name, subject):
+def create_teacher(email, full_name, prefix, password, groups, tests):
     item = {
         'id': generate_id(),
-        'name': name,
-        'subject': subject
+        'email': email,
+        'full_name': full_name,
+        'prefix': prefix,
+        'password': password,
+        'groups': groups,
+        'tests': tests
     }
-    try:
-        test_table.put_item(Item=item)
-    except Exception as e:
-        return 'Error: ' + e.message
-    else:
-        send_emails(['jalexpayan@gmail.com', 'jpayan@cetys.edu.mx'])
-        return item
-
-def get_tests():
-    try:
-        response = test_table
-    except Exception as e:
-        return 'Error: ' + e.message
-    else:
-        tests = response['Items']
-        return tests
+    teacher_table.put_item(Item=item)
+    return item
 
 
-def get_test(id):
-    try:
-        response = test_table.get_item(Key={'id': id})
-    except Exception as e:
-        return 'Error: ' + e.message
-    else:
-        test = response['Item']
-        return test
+def get_teachers():
+    response = teacher_table.scan()
+    tests = response['Items']
+    return tests
 
 
-def update_test(id, test):
-    # Update Test
-    pass
+def get_teacher(teacher_id):
+    response = teacher_table.get_item(Key={'id': teacher_id})
+    test = response['Item']
+    return test
 
 
-def delete_test(id):
-    # Delete Test
-    pass
+def update_teacher(teacher_id, expression, attributes):
+    response = teacher_table.update_item(
+        Key={
+            'id': teacher_id
+        },
+        UpdateExpression=expression,
+        ExpressionAttributeValues=attributes,
+        ReturnValues='UPDATED_NEW'
+    )
+    return response
 
 
-def generate_id():
-    # Generate UUID for table item
-    uid = str(uuid.uuid4())
-    return uid
+def delete_teacher(teacher_id):
+    response = teacher_table.delete_item(Key={'id': teacher_id})
+    return response
