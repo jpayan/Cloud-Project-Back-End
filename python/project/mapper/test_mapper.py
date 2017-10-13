@@ -2,7 +2,7 @@ import boto3
 from project.utils import *
 
 dynamodb = boto3.resource('dynamodb')
-test_table = dynamodb.Table('nb-tests')
+test_table = dynamodb.Table('cc414-nb-tests')
 
 
 def create_test(name, subject, questions):

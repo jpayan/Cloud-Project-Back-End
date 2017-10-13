@@ -2,7 +2,7 @@ import boto3
 from project.utils import *
 
 dynamodb = boto3.resource('dynamodb')
-student_table = dynamodb.Table('nb-students')
+student_table = dynamodb.Table('cc414-nb-students')
 
 
 def create_student(email, full_name):

@@ -2,7 +2,7 @@ import boto3
 from project.utils import *
 
 dynamodb = boto3.resource('dynamodb')
-teacher_table = dynamodb.Table('nb-teachers')
+teacher_table = dynamodb.Table('cc414-nb-teachers')
 
 
 def create_teacher(email, full_name, prefix, password, groups, tests):

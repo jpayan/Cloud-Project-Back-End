@@ -10,7 +10,7 @@ from project.mapper.student_mapper import *
 from project.mapper.teacher_mapper import *
 
 authorizer = IAMAuthorizer()
-app = Chalice(app_name='project-test')
+app = Chalice(app_name='cc414-nb-service')
 app.debug = True
 
 
