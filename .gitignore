@@ -1,1 +1,7 @@
+# PyCharm
 /.idea
+
+# Chalice
+**/.chalice/deployments/
+**/.chalice/venv/
+**/chalicelib/
