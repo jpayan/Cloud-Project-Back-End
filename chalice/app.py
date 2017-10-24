@@ -8,6 +8,7 @@ sys.path.append(os.path.join(here, 'chalicelib/'))
 from project.mapper.test_mapper import *
 from project.mapper.student_mapper import *
 from project.mapper.teacher_mapper import *
+from project.mapper.group_mapper import *
 
 authorizer = IAMAuthorizer()
 app = Chalice(app_name='cc414-nb-service')
@@ -117,7 +118,7 @@ def ep_delete_student(student_id):
 
 
 @app.route('/teachers', methods=['GET'], authorizer=authorizer, content_types=['application/x-www-form-urlencoded'])
-def ep_get_students():
+def ep_get_teachers():
     try:
         items = get_teachers()
         return items
@@ -127,7 +128,7 @@ def ep_get_students():
 
 @app.route('/teachers', methods=['POST'], authorizer=authorizer,
            content_types=['application/x-www-form-urlencoded', 'application/json'])
-def ep_create_student():
+def ep_create_teacher():
     try:
         data = app.current_request.json_body
         item = create_teacher(
@@ -139,7 +140,7 @@ def ep_create_student():
 
 @app.route('/teachers/{teacher_id}', methods=['GET'], authorizer=authorizer,
            content_types=['application/x-www-form-urlencoded'])
-def ep_get_student(teacher_id):
+def ep_get_teacher(teacher_id):
     try:
         item = get_teacher(teacher_id)
         return item
@@ -149,7 +150,7 @@ def ep_get_student(teacher_id):
 
 @app.route('/teachers/{teacher_id}', methods=['PUT'], authorizer=authorizer,
            content_types=['application/x-www-form-urlencoded', 'application/json'])
-def ep_update_student(teacher_id):
+def ep_update_teacher(teacher_id):
     try:
         data = app.current_request.json_body
         response = update_teacher(teacher_id, data['expression'], data['attributes'])
@@ -160,9 +161,66 @@ def ep_update_student(teacher_id):
 
 @app.route('/teachers/{teacher_id}', methods=['DELETE'], authorizer=authorizer,
            content_types=['application/x-www-form-urlencoded'])
-def ep_delete_student(teacher_id):
+def ep_delete_teacher(teacher_id):
     try:
         response = delete_teacher(teacher_id)
+        return response
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+@app.route('/groups/{teacher_id}', methods=['GET'], authorizer=authorizer, content_types=['application/x-www-form-urlencoded'])
+def ep_get_groups(teacher_id):
+    try:
+        items = get_groups(teacher_id)
+        return items
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/groups', methods=['POST'], authorizer=authorizer,
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
+def ep_create_group():
+    try:
+        data = app.current_request.json_body
+        item = create_group(
+            data['name'], data['teacher_id'], data['students'])
+        return item
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/groups', methods=['GET'], authorizer=authorizer,
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
+def ep_get_group():
+    try:
+        data = app.current_request.json_body
+        item = get_group(
+            data['name'], data['teacher_id']
+        )
+        return item
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/groups', methods=['PUT'], authorizer=authorizer,
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
+def ep_update_group():
+    try:
+        data = app.current_request.json_body
+        response = update_group(name, teacher_id, data['expression'], data['attributes'])
+        return response['Attributes']
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/groups', methods=['DELETE'], authorizer=authorizer,
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
+def ep_delete_group():
+    try:
+        data = app.current_request.json_body
+        response = delete_group(
+            data['name'], data['teacher_id']
+        )
         return response
     except Exception as e:
         raise ChaliceViewError(e.message)
