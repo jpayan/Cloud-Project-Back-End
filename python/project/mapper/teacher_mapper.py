@@ -5,15 +5,10 @@ dynamodb = boto3.resource('dynamodb')
 teacher_table = dynamodb.Table('cc414-nb-teachers')
 
 
-def create_teacher(email, full_name, prefix, password, groups, tests):
+def create_teacher(teacher_id, full_name):
     item = {
-        'id': generate_id(),
-        'email': email,
-        'full_name': full_name,
-        'prefix': prefix,
-        'password': password,
-        'groups': groups,
-        'tests': tests
+        'teacher_id': teacher_id,
+        'full_name': full_name
     }
     teacher_table.put_item(Item=item)
     return item
@@ -26,7 +21,7 @@ def get_teachers():
 
 
 def get_teacher(teacher_id):
-    response = teacher_table.get_item(Key={'id': teacher_id})
+    response = teacher_table.get_item(Key={'teacher_id': teacher_id})
     test = response['Item']
     return test
 
@@ -34,7 +29,7 @@ def get_teacher(teacher_id):
 def update_teacher(teacher_id, expression, attributes):
     response = teacher_table.update_item(
         Key={
-            'id': teacher_id
+            'teacher_id': teacher_id
         },
         UpdateExpression=expression,
         ExpressionAttributeValues=attributes,
@@ -44,5 +39,5 @@ def update_teacher(teacher_id, expression, attributes):
 
 
 def delete_teacher(teacher_id):
-    response = teacher_table.delete_item(Key={'id': teacher_id})
+    response = teacher_table.delete_item(Key={'teacher_id': teacher_id})
     return response

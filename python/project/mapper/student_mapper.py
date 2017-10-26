@@ -3,15 +3,16 @@ from project.utils import *
 
 dynamodb = boto3.resource('dynamodb')
 student_table = dynamodb.Table('cc414-nb-students')
+ses = boto3.client('ses')
 
 
 def create_student(email, full_name):
     item = {
-        'id': generate_id(),
         'email': email,
         'full_name': full_name,
     }
     student_table.put_item(Item=item)
+    verify_email(email)
     return item
 
 
@@ -21,16 +22,16 @@ def get_students():
     return tests
 
 
-def get_student(student_id):
-    response = student_table.get_item(Key={'id': student_id})
+def get_student(email):
+    response = student_table.get_item(Key={'email': email})
     test = response['Item']
     return test
 
 
-def update_student(student_id, expression, attributes):
+def update_student(email, expression, attributes):
     response = student_table.update_item(
         Key={
-            'id': student_id
+            'email': email
         },
         UpdateExpression=expression,
         ExpressionAttributeValues=attributes,
@@ -39,6 +40,13 @@ def update_student(student_id, expression, attributes):
     return response
 
 
-def delete_student(student_id):
-    response = student_table.delete_item(Key={'id': student_id})
+def delete_student(email):
+    response = student_table.delete_item(Key={'email': email})
+    return response
+
+
+def verify_email(address):
+    response = ses.verify_email_address(
+        EmailAddress=address
+    )
     return response

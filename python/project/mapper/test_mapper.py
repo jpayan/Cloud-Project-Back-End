@@ -5,9 +5,10 @@ dynamodb = boto3.resource('dynamodb')
 test_table = dynamodb.Table('cc414-nb-tests')
 
 
-def create_test(name, subject, questions):
+def create_test(name, teacher_id, subject, questions):
     item = {
-        'id': generate_id(),
+        'test_id': generate_id(),
+        'teacher_id': teacher_id,
         'title': name,
         'subject': subject,
         'questions': questions
