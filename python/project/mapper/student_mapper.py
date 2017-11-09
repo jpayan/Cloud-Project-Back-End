@@ -6,32 +6,32 @@ student_table = dynamodb.Table('cc414-nb-students')
 ses = boto3.client('ses')
 
 
-def create_student(email, full_name):
+def create_student(student_email, full_name):
     item = {
-        'email': email,
+        'student_email': student_email,
         'full_name': full_name,
     }
     student_table.put_item(Item=item)
-    verify_email(email)
+    verify_email(student_email)
     return item
 
 
 def get_students():
     response = student_table.scan()
-    tests = response['Items']
-    return tests
+    students = response['Items']
+    return students
 
 
-def get_student(email):
-    response = student_table.get_item(Key={'email': email})
-    test = response['Item']
-    return test
+def get_student(student_email):
+    response = student_table.get_item(Key={'student_email': student_email})
+    student = response['Item']
+    return student
 
 
-def update_student(email, expression, attributes):
+def update_student(student_email, expression, attributes):
     response = student_table.update_item(
         Key={
-            'email': email
+            'student_email': student_email
         },
         UpdateExpression=expression,
         ExpressionAttributeValues=attributes,
@@ -40,8 +40,8 @@ def update_student(email, expression, attributes):
     return response
 
 
-def delete_student(email):
-    response = student_table.delete_item(Key={'email': email})
+def delete_student(student_email):
+    response = student_table.delete_item(Key={'student_email': student_email})
     return response
 
 

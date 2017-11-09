@@ -21,6 +21,7 @@ def create_applied_tests(student_email, test_id, code, grade, state):
     send_code(student_email, code)
     return item
 
+
 def get_applied_tests_by_test(test_id, student_ids):
     applied_tests = []
     for student_id in student_ids:
@@ -57,6 +58,7 @@ def delete_applied_test(test_id, student_id):
         }
     )
     return response
+
 
 def send_code(address, code):
     response = ses.send_email(

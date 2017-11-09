@@ -16,7 +16,8 @@ app = Chalice(app_name='cc414-nb-service')
 app.debug = True
 
 
-@app.route('/tests', methods=['GET'], authorizer=authorizer, content_types=['application/x-www-form-urlencoded'])
+@app.route('/tests', methods=['GET'], authorizer=authorizer,
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_get_tests():
     try:
         items = get_tests()
@@ -37,7 +38,7 @@ def ep_create_test():
 
 
 @app.route('/tests/{test_id}', methods=['GET'], authorizer=authorizer,
-           content_types=['application/x-www-form-urlencoded'])
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_get_test(test_id):
     try:
         item = get_test(test_id)
@@ -58,7 +59,7 @@ def ep_update_test(test_id):
 
 
 @app.route('/tests/{test_id}', methods=['DELETE'], authorizer=authorizer,
-           content_types=['application/x-www-form-urlencoded'])
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_delete_test(test_id):
     try:
         response = delete_test(test_id)
@@ -67,7 +68,8 @@ def ep_delete_test(test_id):
         raise ChaliceViewError(e.message)
 
 
-@app.route('/students', methods=['GET'], authorizer=authorizer, content_types=['application/x-www-form-urlencoded'])
+@app.route('/students', methods=['GET'], authorizer=authorizer,
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_get_students():
     try:
         items = get_students()
@@ -88,7 +90,7 @@ def ep_create_student():
 
 
 @app.route('/students/{email}', methods=['GET'], authorizer=authorizer,
-           content_types=['application/x-www-form-urlencoded'])
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_get_student(email):
     try:
         item = get_student(email)
@@ -109,20 +111,11 @@ def ep_update_student(email):
 
 
 @app.route('/students/{email}', methods=['DELETE'], authorizer=authorizer,
-           content_types=['application/x-www-form-urlencoded'])
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_delete_student(email):
     try:
         response = delete_student(email)
         return response
-    except Exception as e:
-        raise ChaliceViewError(e.message)
-
-
-@app.route('/teachers', methods=['GET'], authorizer=authorizer, content_types=['application/x-www-form-urlencoded'])
-def ep_get_teachers():
-    try:
-        items = get_teachers()
-        return items
     except Exception as e:
         raise ChaliceViewError(e.message)
 
@@ -140,7 +133,7 @@ def ep_create_teacher():
 
 
 @app.route('/teachers/{teacher_id}', methods=['GET'], authorizer=authorizer,
-           content_types=['application/x-www-form-urlencoded'])
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_get_teacher(teacher_id):
     try:
         item = get_teacher(teacher_id)
@@ -161,7 +154,7 @@ def ep_update_teacher(teacher_id):
 
 
 @app.route('/teachers/{teacher_id}', methods=['DELETE'], authorizer=authorizer,
-           content_types=['application/x-www-form-urlencoded'])
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_delete_teacher(teacher_id):
     try:
         response = delete_teacher(teacher_id)
@@ -169,7 +162,8 @@ def ep_delete_teacher(teacher_id):
     except Exception as e:
         raise ChaliceViewError(e.message)
 
-@app.route('/groups/{teacher_id}', methods=['GET'], authorizer=authorizer, content_types=['application/x-www-form-urlencoded'])
+@app.route('/groups/{teacher_id}', methods=['GET'], authorizer=authorizer,
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_get_groups(teacher_id):
     try:
         items = get_groups(teacher_id)
@@ -226,7 +220,8 @@ def ep_delete_group():
     except Exception as e:
         raise ChaliceViewError(e.message)
 
-@app.route('/applied_tests/{test_id}', methods=['GET'], authorizer=authorizer, content_types=['application/x-www-form-urlencoded'])
+@app.route('/applied_tests/{test_id}', methods=['GET'], authorizer=authorizer,
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_get_applied_tests_by_test(test_id):
     try:
         data = app.current_request.json_body
@@ -235,7 +230,8 @@ def ep_get_applied_tests_by_test(test_id):
     except Exception as e:
         raise ChaliceViewError(e.message)
 
-@app.route('/applied_tests/{student_id}', methods=['GET'], authorizer=authorizer, content_types=['application/x-www-form-urlencoded'])
+@app.route('/applied_tests/{student_id}', methods=['GET'], authorizer=authorizer,
+           content_types=['application/x-www-form-urlencoded', 'application/json'])
 def ep_get_applied_tests_by_student(student_id):
     try:
         items = get_applied_tests_by_student(student_id)

@@ -20,8 +20,8 @@ def get_groups(teacher_id):
     response = group_table.scan(
         FilterExpression=Key('teacher_id').eq(teacher_id)
     )
-    tests = response['Items']
-    return tests
+    groups = response['Items']
+    return groups
 
 
 def get_group(name, teacher_id):
@@ -31,8 +31,8 @@ def get_group(name, teacher_id):
             'teacher_id': teacher_id
         }
     )
-    test = response['Item']
-    return test
+    group = response['Item']
+    return group
 
 
 def update_group(name, teacher_id, expression, attributes):

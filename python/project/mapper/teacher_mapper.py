@@ -16,14 +16,14 @@ def create_teacher(teacher_id, full_name):
 
 def get_teachers():
     response = teacher_table.scan()
-    tests = response['Items']
-    return tests
+    teachers = response['Items']
+    return teachers
 
 
 def get_teacher(teacher_id):
     response = teacher_table.get_item(Key={'teacher_id': teacher_id})
-    test = response['Item']
-    return test
+    teacher = response['Item']
+    return teacher
 
 
 def update_teacher(teacher_id, expression, attributes):
