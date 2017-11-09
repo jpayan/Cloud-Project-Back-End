@@ -3,7 +3,7 @@
     "region": "us-east-1",
     "api_handler_name": "cc414-nb-service-dev",
     "api_handler_arn": "arn:aws:lambda:us-east-1:292274580527:function:cc414-nb-service-dev",
-    "rest_api_id": "662g9mitck",
+    "rest_api_id": "xv7arvaxo8",
     "lambda_functions": {},
     "chalice_version": "1.0.3",
     "api_gateway_stage": "api",
