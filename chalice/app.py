@@ -118,8 +118,7 @@ def ep_delete_student(email):
 def ep_create_teacher():
     try:
         data = app.current_request.json_body
-        item = create_teacher(
-            data['teacher_id'], data['full_name'])
+        item = create_teacher(data['teacher_id'], data['full_name'], data['access_token'])
         return item
     except Exception as e:
         raise ChaliceViewError(e.message)
