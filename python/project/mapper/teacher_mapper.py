@@ -5,10 +5,11 @@ dynamodb = boto3.resource('dynamodb')
 teacher_table = dynamodb.Table('cc414-nb-teachers')
 
 
-def create_teacher(teacher_id, full_name):
+def create_teacher(teacher_id, full_name, access_token):
     item = {
         'teacher_id': teacher_id,
-        'full_name': full_name
+        'full_name': full_name,
+        'access_token': access_token
     }
     teacher_table.put_item(Item=item)
     return item
