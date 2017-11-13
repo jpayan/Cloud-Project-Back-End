@@ -40,9 +40,11 @@ def get_tests_by_teacher(teacher_id):
 
 
 def get_test_by_code(code):
+    test = {}
     test_id = get_test_id_by_code(code)
-    response = test_table.scan(FilterExpression=Key('test_id').eq(test_id))
-    test = response['Items'][0]
+    if test_id:
+        response = test_table.scan(FilterExpression=Key('test_id').eq(test_id))
+        test = response['Items'][0]
     return test
 
 

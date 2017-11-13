@@ -25,9 +25,11 @@ def create_applied_tests(payload):
 
 
 def get_test_id_by_code(code):
+    test_id = ''
     response = applied_test_table.scan(FilterExpression=Attr('code').eq(code))
-    applied_test = response['Items'][0]
-    test_id = applied_test['test_id']
+    if response['Items']:
+        applied_test = response['Items'][0]
+        test_id = applied_test['test_id']
     return test_id
 
 
@@ -69,6 +71,25 @@ def delete_applied_test(payload):
 
 
 def send_code(address, code):
+    subject = "YOUR TEST CODE."
+
+    text = 'Ready to answer your test?\r\n\nAccess this code:\n\n' + code + '\n\nIn this link:\n' \
+           'https://cc414-nb-website.s3.amazonaws.com/index.html#!/student/home'
+
+    html = '<html>' \
+           '  <head></head>' \
+           '  <body>' \
+           '    <h1>Ready to answer your test?</h1>' \
+           '    <h3>Access this code:</h3>' \
+           '    <p>' + code + '<br/><br/>In this link:<br/>' \
+           '      <a href=\'https://cc414-nb-website.s3.amazonaws.com/index.html#!/student/home\'>' \
+           '        https://cc414-nb-website.s3.amazonaws.com/index.html#!/student/home' \
+           '      </a>' \
+           '    </p>' \
+           '  </body>' \
+           '</html>' \
+
+    charset = 'UTF-8'
     response = ses.send_email(
         Source='jpayan@cetys.edu.mx',
         Destination={
@@ -78,11 +99,16 @@ def send_code(address, code):
         },
         Message={
             'Subject': {
-                'Data': 'Test Code'
+                'Data': subject
             },
             'Body': {
+                'Html': {
+                    'Charset': charset,
+                    'Data': html
+                },
                 'Text': {
-                    'Data': code
+                    'Charset': charset,
+                    'Data': text
                 }
             }
         }

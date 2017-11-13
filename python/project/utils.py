@@ -23,7 +23,7 @@ def generate_id(prefix):
 
 
 def generate_code(test_name, student_email):
-    code = test_name[0:2] + student_email[0:2] + binascii.b2a_hex(os.urandom(3))
+    code = test_name[0:2].upper() + student_email[0:2].upper() + binascii.b2a_hex(os.urandom(3))
     return code
 
 
