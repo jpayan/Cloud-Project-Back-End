@@ -16,65 +16,70 @@ app = Chalice(app_name='cc414-nb-service')
 app.debug = True
 
 
-@app.route('/tests', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_get_tests():
-    try:
-        items = get_tests()
-        return items
-    except Exception as e:
-        raise ChaliceViewError(e.message)
-
-
 @app.route('/tests', methods=['POST'], content_types=['application/x-www-form-urlencoded', 'application/json'],
            cors=True)
 def ep_create_test():
     try:
-        data = app.current_request.json_body
-        item = create_test(data['title'], data['subject'], data['questions'])
-        return item
-    except Exception as e:
-        raise ChaliceViewError(e.message)
-
-
-@app.route('/tests/{test_id}', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_get_test(test_id):
-    try:
-        item = get_test(test_id)
-        return item
-    except Exception as e:
-        raise ChaliceViewError(e.message)
-
-
-@app.route('/tests/{test_id}', methods=['PUT'], content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_update_test(test_id):
-    try:
-        data = app.current_request.json_body
-        response = update_test(test_id, data['expression'], data['attributes'])
-        return response['Attributes']
-    except Exception as e:
-        raise ChaliceViewError(e.message)
-
-
-@app.route('/tests/{test_id}', methods=['DELETE'],
-           content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_delete_test(test_id):
-    try:
-        response = delete_test(test_id)
+        payload = app.current_request.json_body
+        response = create_test(payload)
         return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
 
-@app.route('/students', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_get_students():
+@app.route('/tests/teacher/{teacher_id}', methods=['GET'],
+           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
+def ep_get_tests_by_teacher(teacher_id):
     try:
-        items = get_students()
-        return items
+        response = get_tests_by_teacher(teacher_id)
+        return response
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/tests', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
+           cors=True)
+def ep_get_test():
+    try:
+        test_id = app.current_request.query_params.get('test_id')
+        teacher_id = app.current_request.query_params.get('teacher_id')
+        response = get_test(test_id, teacher_id)
+        return response
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/tests/code/{code}', methods=['GET'],
+           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
+def ep_get_test_by_code(code):
+    try:
+        response = get_test_by_code(code)
+        return response
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/tests', methods=['PUT'], content_types=['application/x-www-form-urlencoded', 'application/json'],
+           cors=True)
+def ep_update_test():
+    try:
+        test_id = app.current_request.query_params.get('test_id')
+        teacher_id = app.current_request.query_params.get('teacher_id')
+        payload = app.current_request.json_body
+        response = update_test(test_id, teacher_id, payload)
+        return response['Attributes']
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/tests', methods=['DELETE'],
+           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
+def ep_delete_test():
+    try:
+        test_id = app.current_request.query_params.get('test_id')
+        teacher_id = app.current_request.query_params.get('teacher_id')
+        response = delete_test(test_id, teacher_id)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
@@ -83,42 +88,42 @@ def ep_get_students():
            cors=True)
 def ep_create_student():
     try:
-        data = app.current_request.json_body
-        item = create_student(data['email'], data['full_name'])
-        return item
+        payload = app.current_request.json_body
+        response = create_student(payload)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
 
-@app.route('/students/{email}', methods=['GET'],
-           content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_get_student(email):
+@app.route('/students/group', methods=['GET'],
+           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
+def ep_get_students_by_group():
     try:
-        item = get_student(email)
-        return item
+        group_name = app.current_request.query_params.get('group_name')
+        teacher_id = app.current_request.query_params.get('teacher_id')
+        response = get_students_by_group(group_name, teacher_id)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
 
-@app.route('/students/{email}', methods=['PUT'],
-           content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_update_student(email):
+@app.route('/students', methods=['PUT'],
+           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
+def ep_update_student():
     try:
-        data = app.current_request.json_body
-        response = update_student(email, data['expression'], data['attributes'])
+        payload = app.current_request.json_body
+        response = update_student(payload)
         return response['Attributes']
     except Exception as e:
         raise ChaliceViewError(e.message)
 
 
-@app.route('/students/{email}', methods=['DELETE'],
-           content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_delete_student(email):
+@app.route('/students', methods=['DELETE'],
+           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
+def ep_delete_student():
     try:
-        response = delete_student(email)
+        payload = app.current_request.json_body
+        response = delete_student(payload)
         return response
     except Exception as e:
         raise ChaliceViewError(e.message)
@@ -128,9 +133,9 @@ def ep_delete_student(email):
            cors=True)
 def ep_create_teacher():
     try:
-        data = app.current_request.json_body
-        item = create_teacher(data['teacher_id'], data['full_name'], data['access_token'])
-        return item
+        payload = app.current_request.json_body
+        response = create_teacher(payload)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
@@ -139,19 +144,8 @@ def ep_create_teacher():
            content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
 def ep_get_teacher(teacher_id):
     try:
-        item = get_teacher(teacher_id)
-        return item
-    except Exception as e:
-        raise ChaliceViewError(e.message)
-
-
-@app.route('/teachers/{teacher_id}', methods=['PUT'],
-           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
-def ep_update_teacher(teacher_id):
-    try:
-        data = app.current_request.json_body
-        response = update_teacher(teacher_id, data['expression'], data['attributes'])
-        return response['Attributes']
+        response = get_teacher(teacher_id)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
@@ -166,37 +160,23 @@ def ep_delete_teacher(teacher_id):
         raise ChaliceViewError(e.message)
 
 
-@app.route('/groups/{teacher_id}', methods=['GET'],
-           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
-def ep_get_groups(teacher_id):
-    try:
-        items = get_groups(teacher_id)
-        return items
-    except Exception as e:
-        raise ChaliceViewError(e.message)
-
-
 @app.route('/groups', methods=['POST'], content_types=['application/x-www-form-urlencoded', 'application/json'],
            cors=True)
 def ep_create_group():
     try:
-        data = app.current_request.json_body
-        item = create_group(
-            data['name'], data['teacher_id'], data['students'])
-        return item
+        payload = app.current_request.json_body
+        response = create_group(payload)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
 
-@app.route('/groups', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_get_group():
+@app.route('/groups/{teacher_id}', methods=['GET'],
+           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
+def ep_get_groups_by_teacher_id(teacher_id):
     try:
-        data = app.current_request.json_body
-        item = get_group(
-            data['name'], data['teacher_id']
-        )
-        return item
+        response = get_groups_by_teacher_id(teacher_id)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
@@ -205,8 +185,8 @@ def ep_get_group():
            cors=True)
 def ep_update_group():
     try:
-        data = app.current_request.json_body
-        response = update_group(data['name'], data['teacher_id'], data['expression'], data['attributes'])
+        payload = app.current_request.json_body
+        response = update_group(payload)
         return response['Attributes']
     except Exception as e:
         raise ChaliceViewError(e.message)
@@ -216,57 +196,41 @@ def ep_update_group():
            cors=True)
 def ep_delete_group():
     try:
-        data = app.current_request.json_body
-        response = delete_group(
-            data['name'], data['teacher_id']
-        )
+        payload = app.current_request.json_body
+        response = delete_group(payload)
         return response
     except Exception as e:
         raise ChaliceViewError(e.message)
-
-
-@app.route('/applied_tests/{test_id}', methods=['GET'],
-           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
-def ep_get_applied_tests_by_test(test_id):
-    try:
-        data = app.current_request.json_body
-        items = get_applied_tests_by_test(test_id, data['student_ids'])
-        return items
-    except Exception as e:
-        raise ChaliceViewError(e.message)
-
-
-# @app.route('/applied_tests/{student_id}', methods=['GET'], authorizer=authorizer,
-#            content_types=['application/x-www-form-urlencoded', 'application/json'])
-# def ep_get_applied_tests_by_student(student_id):
-#     try:
-#         items = get_applied_tests_by_student(student_id)
-#         return items
-#     except Exception as e:
-#         raise ChaliceViewError(e.message)
 
 
 @app.route('/applied_tests', methods=['POST'], content_types=['application/x-www-form-urlencoded', 'application/json'],
            cors=True)
 def ep_create_applied_tests():
     try:
-        data = app.current_request.json_body
-        item = create_applied_tests(
-            data['student_id'], data['test_id'], data['code'], data['grade'], data['state'])
-        return item
+        payload = app.current_request.json_body
+        response = create_applied_tests(payload)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
 
-@app.route('/applied_tests', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
-           cors=True)
-def ep_get_applied_test():
+@app.route('/applied_tests/test/{test_id}', methods=['GET'],
+           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
+def ep_get_applied_tests_by_test(test_id):
     try:
-        data = app.current_request.json_body
-        item = get_applied_test(
-            data['test_id'], data['student_id']
-        )
-        return item
+        response = get_applied_tests_by_test(test_id)
+        return response
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/applied_tests', methods=['PUT'],
+           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
+def ep_update_applied_test():
+    try:
+        payload = app.current_request.json_body
+        response = update_applied_test(payload)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
 
@@ -275,10 +239,8 @@ def ep_get_applied_test():
            content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
 def ep_delete_applied_test():
     try:
-        data = app.current_request.json_body
-        response = delete_applied_test(
-            data['test_id'], data['student_id']
-        )
+        payload = app.current_request.json_body
+        response = delete_applied_test(payload)
         return response
     except Exception as e:
         raise ChaliceViewError(e.message)
