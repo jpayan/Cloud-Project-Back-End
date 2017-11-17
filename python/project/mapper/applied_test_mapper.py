@@ -1,7 +1,8 @@
 import boto3
 import re
 from boto3.dynamodb.conditions import Key, Attr
-from project.utils import get_test_name, generate_code
+from project.utils import get_test_name, generate_code, validate_access_token
+from project.errors import UnauthorizedError
 
 dynamodb = boto3.resource('dynamodb')
 applied_test_table = dynamodb.Table('cc414-nb-applied-tests')
@@ -9,19 +10,22 @@ ses = boto3.client('ses')
 
 
 def create_applied_tests(payload):
-    item = {
-        'student_email': payload['student_email'],
-        'test_id': payload['test_id'],
-        'grade': payload['grade'],
-        'state': payload['state'],
-        'answers': payload['answers']
-    }
-    test_name = get_test_name(payload['test_id'])
-    code = generate_code(test_name, payload['student_email'])
-    item['code'] = code
-    applied_test_table.put_item(Item=item)
-    send_code(payload['student_email'], code)
-    return item
+    if validate_access_token(payload):
+        item = {
+            'student_email': payload['student_email'],
+            'test_id': payload['test_id'],
+            'grade': payload['grade'],
+            'state': payload['state'],
+            'answers': payload['answers']
+        }
+        test_name = get_test_name(payload['test_id'])
+        code = generate_code(test_name, payload['student_email'])
+        item['code'] = code
+        applied_test_table.put_item(Item=item)
+        send_code(payload['student_email'], code)
+        return item
+    else:
+        raise UnauthorizedError()
 
 
 def get_test_id_by_code(code):
@@ -42,11 +46,13 @@ def get_applied_tests_by_test(test_id):
 def get_applied_tests_by_student(student_email):
     response = applied_test_table.scan(FilterExpression=Key('student_email').eq(student_email))
     applied_tests = response['Items']
+    print('STUDENT EMAIL', student_email)
+    print('APPLIED TESTS', applied_tests)
     return applied_tests
 
 
 def update_applied_test(payload):
-    if 'token' in payload or re.match(r'set answers=:a', payload['expression']):
+    if validate_access_token(payload) or re.match(r'set answers=:a', payload['expression']):
         response = applied_test_table.update_item(
             Key={
                 'test_id': payload['test_id'],
@@ -57,10 +63,7 @@ def update_applied_test(payload):
             ReturnValues='ALL_NEW'
         )
     else:
-        response = {
-            'Status': 403,
-            'Message': 'You are not authorized to do this action.'
-        }
+        raise UnauthorizedError()
     return response
 
 
@@ -91,7 +94,7 @@ def send_code(address, code):
 
     charset = 'UTF-8'
     response = ses.send_email(
-        Source='jpayan@cetys.edu.mx',
+        Source='cc414.nb@gmail.com',
         Destination={
             'ToAddresses': [
                 address
