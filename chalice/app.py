@@ -1,6 +1,6 @@
 import os
 import sys
-from chalice import Chalice, IAMAuthorizer, ChaliceViewError
+from chalice import Chalice, ChaliceViewError
 
 here = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(here, 'chalicelib/'))
@@ -11,7 +11,6 @@ from project.mapper.teacher_mapper import *
 from project.mapper.group_mapper import *
 from project.mapper.applied_test_mapper import *
 
-authorizer = IAMAuthorizer()
 app = Chalice(app_name='cc414-nb-service')
 app.debug = True
 
@@ -145,16 +144,6 @@ def ep_create_teacher():
 def ep_get_teacher(teacher_id):
     try:
         response = get_teacher(teacher_id)
-        return response
-    except Exception as e:
-        raise ChaliceViewError(e.message)
-
-
-@app.route('/teachers/{teacher_id}', methods=['DELETE'],
-           content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
-def ep_delete_teacher(teacher_id):
-    try:
-        response = delete_teacher(teacher_id)
         return response
     except Exception as e:
         raise ChaliceViewError(e.message)
