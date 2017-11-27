@@ -28,13 +28,22 @@ def create_applied_tests(payload):
         raise UnauthorizedError()
 
 
-def get_test_id_by_code(code):
+def create_applied_tests_by_group(payload):
+    if validate_access_token(payload):
+        pass
+    else:
+        raise UnauthorizedError()
+
+
+def get_test_id_and_email_by_code(code):
     test_id = ''
+    email = ''
     response = applied_test_table.scan(FilterExpression=Attr('code').eq(code))
     if response['Items']:
         applied_test = response['Items'][0]
         test_id = applied_test['test_id']
-    return test_id
+        email = applied_test['student_email']
+    return test_id, email
 
 
 def get_applied_tests_by_test(test_id):
@@ -52,7 +61,11 @@ def get_applied_tests_by_student(student_email):
 
 
 def update_applied_test(payload):
-    if validate_access_token(payload) or re.match(r'set answers=:a', payload['expression']):
+    applied_test_result = applied_test_table.get_item(Key={'test_id': payload['test_id'],
+                                                           'student_email': payload['student_email']})
+    applied_test = applied_test_result['Item'] if 'Item' in applied_test_result else {'current_state': None}
+    if validate_access_token(payload) or (applied_test['current_state'] == 'PENDING'
+                                          and re.match(r'set.*answers=:a.*', payload['expression'])):
         response = applied_test_table.update_item(
             Key={
                 'test_id': payload['test_id'],

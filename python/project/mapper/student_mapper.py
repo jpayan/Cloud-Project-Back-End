@@ -1,5 +1,4 @@
 import boto3
-import unicodedata
 from group_mapper import get_group
 from applied_test_mapper import get_applied_tests_by_student
 from project.utils import validate_access_token

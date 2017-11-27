@@ -1,7 +1,7 @@
 import boto3
 import re
 from boto3.dynamodb.conditions import Key
-from applied_test_mapper import get_test_id_by_code
+from applied_test_mapper import get_test_id_and_email_by_code
 from project.utils import generate_id, generate_question_ids, validate_access_token
 from project.errors import UnauthorizedError
 
@@ -45,11 +45,12 @@ def get_tests_by_teacher(teacher_id):
 
 
 def get_test_by_code(code):
-    test = {}
-    test_id = get_test_id_by_code(code)
-    if test_id:
+    test = {'email': '', 'test': {}}
+    test_id, email = get_test_id_and_email_by_code(code)
+    if test_id and email:
         response = test_table.scan(FilterExpression=Key('test_id').eq(test_id))
-        test = response['Items'][0]
+        test['email'] = email
+        test['test'] = response['Items'][0]
     return test
 
 

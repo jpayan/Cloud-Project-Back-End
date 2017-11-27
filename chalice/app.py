@@ -10,6 +10,7 @@ from project.mapper.student_mapper import *
 from project.mapper.teacher_mapper import *
 from project.mapper.group_mapper import *
 from project.mapper.applied_test_mapper import *
+from project.NLP.answer_analyzer import *
 
 app = Chalice(app_name='cc414-nb-service')
 app.debug = True
@@ -203,6 +204,18 @@ def ep_create_applied_tests():
         raise ChaliceViewError(e.message)
 
 
+@app.route('/applied_tests/group', methods=['POST'], content_types=['application/x-www-form-urlencoded',
+                                                                    'application/json'],
+           cors=True)
+def ep_create_applied_tests_by_group():
+    try:
+        payload = app.current_request.json_body
+        response = create_applied_tests_by_group(payload)
+        return response
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
 @app.route('/applied_tests/test/{test_id}', methods=['GET'],
            content_types=['application/x-www-form-urlencoded', 'application/json'], cors=True)
 def ep_get_applied_tests_by_test(test_id):
@@ -231,5 +244,16 @@ def ep_delete_applied_test():
         payload = app.current_request.json_body
         response = delete_applied_test(payload)
         return response
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+# ******************************************************** NLP ******************************************************* #
+
+@app.route('/analyze', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
+           cors=True)
+def ep_analyze_answer():
+    try:
+        pass
     except Exception as e:
         raise ChaliceViewError(e.message)
