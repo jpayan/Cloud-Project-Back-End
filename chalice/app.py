@@ -250,10 +250,25 @@ def ep_delete_applied_test():
 
 # ******************************************************** NLP ******************************************************* #
 
-@app.route('/analyze', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
+@app.route('/nlp/feedback', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
            cors=True)
-def ep_analyze_answer():
+def ep_get_answer_feedback():
     try:
-        pass
+        concept = app.current_request.query_params.get('concept')
+        answer = app.current_request.query_params.get('answer')
+        response = get_answer_feedback(concept, answer)
+        return response
+    except Exception as e:
+        raise ChaliceViewError(e.message)
+
+
+@app.route('/nlp/grade', methods=['GET'], content_types=['application/x-www-form-urlencoded', 'application/json'],
+           cors=True)
+def ep_grade_answer():
+    try:
+        concept = app.current_request.query_params.get('concept')
+        answer = app.current_request.query_params.get('answer')
+        response = grade_answer(concept, answer)
+        return response
     except Exception as e:
         raise ChaliceViewError(e.message)
