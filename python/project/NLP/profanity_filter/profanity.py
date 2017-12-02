@@ -20,11 +20,11 @@ def contains_profanity(input_text):
     return True if curse_word.search(input_text) else False
 
 
-def load_words(word_list=None):
+def load_words():
     global _words
-    if not word_list:
-        filename = 'word_list.txt'
-        f = open(filename)
-        word_list = f.readlines()
-        word_list = [w.strip() for w in word_list if w]
+    # filename = '/Users/jorge.payan/Projects/Project/Cloud-Project-Back-End/python/project/NLP/profanity_filter/word_list.txt'
+    filename = 'word_list.txt'
+    f = open(filename)
+    word_list = f.readlines()
+    word_list = [w.strip() for w in word_list if w]
     _words = word_list
